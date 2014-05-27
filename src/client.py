@@ -7,11 +7,9 @@ import utilities
 from auth_exc import AuthorizationException
 
 class Client:
-	def __init__(self, UDP_IP = '127.0.0.1', UDP_PORT = 50009, BUFF = 1024):
+	def __init__(self, UDP_IP = '127.0.0.1', UDP_PORT = 50009):
 		self.__UDP_PORT = UDP_PORT
 		self.__UDP_IP = UDP_IP
-		self.__BUFF = BUFF
-		self.__EOM = 'CLOSE_CONN'
 		self.__secret = 'passw0rd'
 		self.__socket = None
 		self.__init_socket()	
