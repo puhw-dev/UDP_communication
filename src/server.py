@@ -1,0 +1,53 @@
+#!/usr/bin/python3
+import socket
+import threading
+import time
+import struct
+import utilities
+
+class Server:
+	def __init__(self, UDP_IP = '127.0.0.1', UDP_PORT = 50009, BUFF = 1024):
+		self.__UDP_PORT = UDP_PORT
+		self.__UDP_IP = UDP_IP
+		self.__MAX_BUFF = BUFF
+		self.__secret = 'passw0rd'
+		self.__socket = None
+		self.__init_socket()
+		self.__handle_connections()
+
+	def __init_socket(self):
+		self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		self.__socket.bind(('', self.__UDP_PORT))
+		self.__socket.listen(5)
+
+	def __handle_connections(self):
+		while True:
+			print('Waiting for connection...')
+			socket, address = self.__socket.accept()
+			print('Accepting connection from {}:{}'.format(address[0], address[1]))
+			threading.Thread(target = self.__handler, args = (socket, address)).start()
+
+	def __handler(self, socket, address):
+		self.__authorize(socket)		
+		message = ''
+		data_length = struct.unpack('L', socket.recv(8))[0]
+		while data_length > 0: 
+			chunk_size = min(data_length, self.__MAX_BUFF)
+			message += socket.recv(chunk_size).decode('UTF-8').rstrip()
+			data_length -= chunk_size
+		socket.close()
+		print('Connection with {}:{} closed'.format(address[0], address[1]))
+		print('Received message: {}'.format(message))
+		return message
+
+	def __authorize(self, socket):
+		sc = socket.recv(utilities.RAND_SIZE).decode('UTF-8').rstrip()
+		cc = utilities.generate_random_value()
+		cr = utilities.get_hashed_value(sc+cc+self.__secret)
+		socket.send(bytes(cc, 'UTF-8'))
+		socket.send(struct.pack('I', len(cr)))
+		socket.send(bytes(cr, 'UTF-8'))
+		
+
+if __name__ == '__main__':
+	server = Server()
