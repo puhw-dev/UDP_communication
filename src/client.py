@@ -16,7 +16,7 @@ class Client:
 		self.__UDP_IP = UDP_IP
 		self.__secret = 'passw0rd'
 		self.__socket = None
-		logger.configureLogger()
+		logger.configureLogger(file_name = '../logs/client_log_'+str(UDP_PORT)+'.txt')
 		self.__init_socket()	
 
 	def __init_socket(self):
@@ -35,10 +35,12 @@ class Client:
 		
 	def send_data(self, data):
 		try:
+			logging.debug('Communication started')
 			self.__is_authorized()
 			data = crypt.encrypt(data, self.__secret)
 			self.__socket.send(struct.pack('L', len(data)))
 			self.__socket.send(data)
+			logging.debug('Success')
 		except AuthorizationException as e:
 			self.__socket.send(struct.pack('L', 0))
 			logging.exception(e)

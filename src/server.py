@@ -13,7 +13,7 @@ class Server:
 		self.__params['MAX_BUFF'] = BUFF
 		self.__params['secret'] = 'passw0rd'
 		self.__socket = None
-		logger.configureLogger()
+		logger.configureLogger(file_name = '../logs/server_log_'+str(UDP_PORT)+'.txt')
 		self.__init_socket()
 		self.__handle_connections()
 
