@@ -1,2 +1,4 @@
 /src/__pycache__
+db.sql
+monitor.db
 *.txt
