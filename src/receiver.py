@@ -10,7 +10,6 @@ import crypt
 class MessageReceiver(threading.Thread):
 	def __init__(self, params):
 		threading.Thread.__init__(self)
-		self.__params = params
 		self.__UDP_PORT = params['address'][1]
 		self.__UDP_IP = params['address'][0]
 		self.__MAX_BUFF = params['MAX_BUFF']
@@ -39,7 +38,7 @@ class MessageReceiver(threading.Thread):
 	def __authorize(self, socket):
 		sc = socket.recv(utilities.RAND_SIZE).decode('UTF-8').rstrip()
 		cc = utilities.generate_random_value()
-		cr = utilities.get_hashed_value(sc+cc+self.__params['secret'])
+		cr = utilities.get_hashed_value(sc+cc+self.__secret)
 		socket.send(bytes(cc, 'UTF-8'))
 		socket.send(struct.pack('I', len(cr)))
 		socket.send(bytes(cr, 'UTF-8'))
