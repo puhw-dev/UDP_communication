@@ -5,6 +5,7 @@ import time
 import struct
 import logger
 import logging
+import traceback
 import utilities
 import crypt
 
@@ -32,16 +33,21 @@ class Server:
 			threading.Thread(target = self.__handler, args = (socket, address)).start()
 
 	def __handler(self, socket, address):
-		self.__authorize(socket)		
 		message = b''
-		data_length = struct.unpack('L', socket.recv(8))[0]
-		while data_length > 0: 
-			chunk_size = min(data_length, self.__MAX_BUFF)
-			message += socket.recv(chunk_size)
-			data_length -= chunk_size
-		socket.close()
+		try:
+			self.__authorize(socket)		
+			data_length = struct.unpack('L', socket.recv(8))[0]
+			while data_length > 0: 
+				chunk_size = min(data_length, self.__MAX_BUFF)
+				message += socket.recv(chunk_size)
+				data_length -= chunk_size
+		except IOError as e:
+			logging.exception(e)
+			message = b''	
+		finally:
+			socket.close()
+			logging.debug('Connection with {}:{} closed'.format(address[0], address[1]))
 		message = crypt.decrypt(message, self.__secret)
-		logging.debug('Connection with {}:{} closed'.format(address[0], address[1]))
 		logging.debug('Message received from {}:{} : {}'.format(address[0], address[1], message))
 		return message
 

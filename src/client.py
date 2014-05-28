@@ -41,7 +41,9 @@ class Client:
 			self.__socket.send(data)
 		except AuthorizationException as e:
 			self.__socket.send(struct.pack('L', 0))
-			logging.error(e)
+			logging.exception(e)
+		except IOError as e:
+			logging.exception(e)
 		finally:
 			self.__socket.close()
 
