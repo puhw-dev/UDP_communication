@@ -2,6 +2,8 @@
 import socket
 import sys
 import struct
+import logger
+import logging
 import utilities
 
 from auth_exc import AuthorizationException
@@ -12,6 +14,7 @@ class Client:
 		self.__UDP_IP = UDP_IP
 		self.__secret = 'passw0rd'
 		self.__socket = None
+		logger.configureLogger()
 		self.__init_socket()	
 
 	def __init_socket(self):
@@ -35,7 +38,9 @@ class Client:
 			self.__socket.send(bytes(data, 'UTF-8'))
 		except AuthorizationException as e:
 			self.__socket.send(struct.pack('L', 0))
-			print(e)
+			logging.error(e)
+		except socket.error as e:
+			print('Dupa', e)
 		finally:
 			self.__socket.close()
 

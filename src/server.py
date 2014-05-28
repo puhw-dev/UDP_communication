@@ -3,6 +3,8 @@ import socket
 import threading
 import time
 import struct
+import logger
+import logging
 import utilities
 
 class Server:
@@ -12,6 +14,7 @@ class Server:
 		self.__MAX_BUFF = BUFF
 		self.__secret = 'passw0rd'
 		self.__socket = None
+		logger.configureLogger()
 		self.__init_socket()
 		self.__handle_connections()
 
@@ -22,9 +25,9 @@ class Server:
 
 	def __handle_connections(self):
 		while True:
-			print('Waiting for connection...')
+			logging.debug('Waiting for connection')
 			socket, address = self.__socket.accept()
-			print('Accepting connection from {}:{}'.format(address[0], address[1]))
+			logging.debug('Accepting connection from {}:{}'.format(address[0], address[1]))
 			threading.Thread(target = self.__handler, args = (socket, address)).start()
 
 	def __handler(self, socket, address):
@@ -36,8 +39,8 @@ class Server:
 			message += socket.recv(chunk_size).decode('UTF-8').rstrip()
 			data_length -= chunk_size
 		socket.close()
-		print('Connection with {}:{} closed'.format(address[0], address[1]))
-		print('Received message: {}'.format(message))
+		logging.debug('Connection with {}:{} closed'.format(address[0], address[1]))
+		logging.debug('Received message: {}'.format(message))
 		return message
 
 	def __authorize(self, socket):
