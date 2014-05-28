@@ -1,4 +1,5 @@
 UDP_communication
 =================
 Requirements:
-- python3.2.3
+- python 3.2.3
+- python-dev package

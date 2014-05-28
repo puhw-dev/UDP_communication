@@ -6,9 +6,10 @@ import struct
 import logger
 import logging
 import utilities
+import crypt
 
 class Server:
-	def __init__(self, UDP_IP = '127.0.0.1', UDP_PORT = 50009, BUFF = 1024):
+	def __init__(self, UDP_IP = '127.0.0.1', UDP_PORT = 50009, BUFF = 16):
 		self.__UDP_PORT = UDP_PORT
 		self.__UDP_IP = UDP_IP
 		self.__MAX_BUFF = BUFF
@@ -32,15 +33,16 @@ class Server:
 
 	def __handler(self, socket, address):
 		self.__authorize(socket)		
-		message = ''
+		message = b''
 		data_length = struct.unpack('L', socket.recv(8))[0]
 		while data_length > 0: 
 			chunk_size = min(data_length, self.__MAX_BUFF)
-			message += socket.recv(chunk_size).decode('UTF-8').rstrip()
+			message += socket.recv(chunk_size)
 			data_length -= chunk_size
 		socket.close()
+		message = crypt.decrypt(message, self.__secret)
 		logging.debug('Connection with {}:{} closed'.format(address[0], address[1]))
-		logging.debug('Received message: {}'.format(message))
+		logging.debug('Message received from {}:{} : {}'.format(address[0], address[1], message))
 		return message
 
 	def __authorize(self, socket):

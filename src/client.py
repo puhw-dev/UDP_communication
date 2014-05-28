@@ -5,7 +5,9 @@ import struct
 import logger
 import logging
 import utilities
+import crypt
 
+from Crypto.Cipher import AES
 from auth_exc import AuthorizationException
 
 class Client:
@@ -34,13 +36,12 @@ class Client:
 	def send_data(self, data):
 		try:
 			self.__is_authorized()
+			data = crypt.encrypt(data, self.__secret)
 			self.__socket.send(struct.pack('L', len(data)))
-			self.__socket.send(bytes(data, 'UTF-8'))
+			self.__socket.send(data)
 		except AuthorizationException as e:
 			self.__socket.send(struct.pack('L', 0))
 			logging.error(e)
-		except socket.error as e:
-			print('Dupa', e)
 		finally:
 			self.__socket.close()
 
