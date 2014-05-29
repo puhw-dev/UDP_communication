@@ -6,6 +6,7 @@ import logger
 import logging
 import utilities
 import crypt
+import time
 
 from Crypto.Cipher import AES
 from auth_exc import AuthorizationException
@@ -17,7 +18,7 @@ class Client:
 		self.__secret = 'passw0rd'
 		self.__socket = None
 		logger.configureLogger(file_name = '../logs/client_log_'+str(UDP_PORT)+'.txt')
-		self.__init_socket()	
+		#self.__init_socket()	
 
 	def __init_socket(self):
 		self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -34,6 +35,7 @@ class Client:
 			raise AuthorizationException('Invalid credentials! No data will be sent.')
 		
 	def send_data(self, data):
+		self.__init_socket()
 		try:
 			logging.debug('Communication started')
 			self.__is_authorized()
@@ -52,3 +54,6 @@ class Client:
 if __name__ == '__main__':
 	client = Client()
 	client.send_data(sys.argv[1])
+	client.send_data("""{
+	"kill": "sensor2"
+	}""")
