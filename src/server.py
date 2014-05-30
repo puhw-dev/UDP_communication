@@ -8,13 +8,15 @@ import threading
 import utilities
 import crypt
 
+from auth_exc import AuthorizationException
+
 
 class Server:
 	def __init__(self, UDP_IP = '127.0.0.1', UDP_PORT = 50009, BUFF = 16):
 		self.__UDP_PORT = UDP_PORT
 		self.__UDP_IP = UDP_IP
 		self.__MAX_BUFF = BUFF
-		self.__secret = 'passw0rd'
+		self.__secret = 'passwOrd'
 		self.__socket = None
 		logger.configureLogger(file_name = '../logs/server_log_'+str(UDP_PORT)+'.txt')
 		self.__init_socket()
@@ -41,6 +43,8 @@ class Server:
 				chunk_size = min(data_length, self.__MAX_BUFF)
 				message += socket.recv(chunk_size)
 				data_length -= chunk_size
+		except AuthorizationException as e:
+			logging.exception(e)
 		except IOError as e:
 			logging.exception(e)
 			message = b''	
@@ -58,6 +62,10 @@ class Server:
 		socket.send(bytes(cc, 'UTF-8'))
 		socket.send(struct.pack('I', len(cr)))
 		socket.send(bytes(cr, 'UTF-8'))
+		sr_len = struct.unpack('I', socket.recv(4))[0]
+		sr = socket.recv(sr_len).decode('UTF-8').rstrip()
+		if cr != sr:
+			raise AuthorizationException('Invalid credentials! No data will be accepted')
 	
 if __name__ == '__main__':
 	server = Server()

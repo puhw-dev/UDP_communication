@@ -15,10 +15,9 @@ class Client:
 	def __init__(self, UDP_IP = '127.0.0.1', UDP_PORT = 50009):
 		self.__UDP_PORT = UDP_PORT
 		self.__UDP_IP = UDP_IP
-		self.__secret = 'passw0rd'
+		self.__secret = 'passwOrd'
 		self.__socket = None
 		logger.configureLogger(file_name = '../logs/client_log_'+str(UDP_PORT)+'.txt')
-		#self.__init_socket()	
 
 	def __init_socket(self):
 		self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -33,6 +32,9 @@ class Client:
 		sr = utilities.get_hashed_value(sc+cc+self.__secret)
 		if cr != sr:
 			raise AuthorizationException('Invalid credentials! No data will be sent.')
+		sr = utilities.get_hashed_value(sc+cc+self.__secret)
+		self.__socket.send(struct.pack('I', len(sr)))	
+		self.__socket.send(bytes(sr, 'UTF-8'))
 		
 	def send_data(self, data):
 		self.__init_socket()
@@ -42,7 +44,7 @@ class Client:
 			data = crypt.encrypt(data, self.__secret)
 			self.__socket.send(struct.pack('L', len(data)))
 			self.__socket.send(data)
-			logging.debug('Success')
+			logging.debug('Message sent')
 		except AuthorizationException as e:
 			self.__socket.send(struct.pack('L', 0))
 			logging.exception(e)
@@ -53,7 +55,6 @@ class Client:
 
 if __name__ == '__main__':
 	client = Client()
-	client.send_data(sys.argv[1])
 	client.send_data("""{
 	"kill": "sensor2"
 	}""")
