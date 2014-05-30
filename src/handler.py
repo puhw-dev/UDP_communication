@@ -46,3 +46,5 @@ class MessageHandler(threading.Thread):
 
 	def __process_kill_message(self):	
 		logging.debug('Processing kill message')
+		sensor_name = self.__data['sensor_name']
+		
