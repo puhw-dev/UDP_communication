@@ -4,6 +4,8 @@ import json
 
 from dbman import DBManager
 from custom_exc import UnknownMessageType
+from subprocess import call
+from subprocess import check_output
 
 
 class MessageHandler(threading.Thread):
@@ -47,4 +49,7 @@ class MessageHandler(threading.Thread):
 	def __process_kill_message(self):	
 		logging.debug('Processing kill message')
 		sensor_name = self.__data['sensor_name']
+		pid = check_output(['pgrep', sensor_name]).decode().rstrip()
+		call(['kill', '-9', pid])
+
 		
