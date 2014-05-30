@@ -2,22 +2,23 @@
 import socket
 import sys
 import struct
-import logger
 import logging
+import json
+import logger
 import utilities
 import crypt
-import time
 
 from Crypto.Cipher import AES
 from custom_exc import AuthorizationException
 
 class Client:
-	def __init__(self, UDP_IP = '127.0.0.1', UDP_PORT = 50009):
-		self.__UDP_PORT = UDP_PORT
-		self.__UDP_IP = UDP_IP
-		self.__secret = 'passwOrd'
+	def __init__(self, config_file):
+		config = json.load(open(config_file))
+		self.__UDP_PORT = config['port']
+		self.__UDP_IP = config['server_ip']
+		self.__secret = config['secret']
 		self.__socket = None
-		logger.configureLogger(file_name = '../logs/client_log_'+str(UDP_PORT)+'.txt')
+		logger.configureLogger(file_name = '../logs/client_log_'+str(self.__UDP_PORT)+'.txt')
 
 	def __init_socket(self):
 		self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -54,7 +55,7 @@ class Client:
 			self.__socket.close()
 
 if __name__ == '__main__':
-	client = Client()
+	client = Client('../config/client_config.json')
 	client.send_data("""{
 	"message_type" : "register",
 	"username" : "user1",

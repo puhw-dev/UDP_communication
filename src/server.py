@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 import socket
 import struct
-import logger
 import logging
+import json
+import logger
 import utilities
 import crypt
 
@@ -11,14 +12,14 @@ from handler import MessageHandler
 
 
 class Server:
-	def __init__(self, UDP_IP = '127.0.0.1', UDP_PORT = 50009, BUFF = 16):
-		self.__UDP_PORT = UDP_PORT
-		self.__UDP_IP = UDP_IP
-		self.__MAX_BUFF = BUFF
-		self.__secret = 'passwOrd'
-		self.__socket = None
-		logger.configureLogger(file_name = '../logs/server_log_'+str(UDP_PORT)+'.txt')
-		self.__db_path = '../monitor.db'
+	def __init__(self, config_file):
+		config = json.load(open(config_file))
+		self.__UDP_PORT = config['port']
+		self.__MAX_BUFF = config['buffer']
+		self.__secret   = config['secret']
+		self.__db_path  = config['db_path']
+		self.__socket   = None
+		logger.configureLogger(file_name = '../logs/server_log_'+str(self.__UDP_PORT)+'.txt')
 		self.__init_socket()
 		self.__handle_connections()
 
@@ -51,9 +52,9 @@ class Server:
 			message = b''	
 		finally:
 			socket.close()
-			logging.debug('Connection with {}:{} closed'.format(self.__UDP_IP, self.__UDP_PORT))
+			logging.debug('Connection with {}:{} closed'.format(address[0], address[1]))
 		message = crypt.decrypt(message, self.__secret)
-		logging.debug('Message received from {}:{} : {}'.format(self.__UDP_IP, self.__UDP_PORT, message))
+		logging.debug('Message received from {}:{} : {}'.format(address[0], address[1], message))
 		return message
 
 	def __authorize(self, socket):
@@ -69,4 +70,4 @@ class Server:
 			raise AuthorizationException('Invalid credentials! No data will be accepted')
 	
 if __name__ == '__main__':
-	server = Server()
+	server = Server('../config/server_config.json')
