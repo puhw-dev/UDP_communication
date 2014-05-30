@@ -56,5 +56,18 @@ class Client:
 if __name__ == '__main__':
 	client = Client()
 	client.send_data("""{
-	"kill": "sensor2"
+	"message_type" : "register",
+	"username" : "user1",
+	"hostname" : "host1",
+	"sensor_type" : "sys",
+	"sensor_name" : "sensor1",
+	"rpm" : 10
+	}""")
+
+	client.send_data("""{
+	"message_type" : "measurement",
+	"sensor_name" : "sensor1",
+	"metrics_name" : "cpu",
+	"data":
+		{ "val":"55%", "time":"10/10/2014 10:10:11" }
 	}""")

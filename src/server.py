@@ -1,14 +1,13 @@
 #!/usr/bin/python3
 import socket
-import threading
 import struct
 import logger
 import logging
-import threading
 import utilities
 import crypt
 
 from auth_exc import AuthorizationException
+from handler import MessageHandler
 
 
 class Server:
@@ -19,6 +18,7 @@ class Server:
 		self.__secret = 'passwOrd'
 		self.__socket = None
 		logger.configureLogger(file_name = '../logs/server_log_'+str(UDP_PORT)+'.txt')
+		self.__db_path = '../monitor.db'
 		self.__init_socket()
 		self.__handle_connections()
 
@@ -32,7 +32,8 @@ class Server:
 			logging.debug('Waiting for connection')
 			socket, address = self.__socket.accept()
 			logging.debug('Accepting connection from {}:{}'.format(address[0], address[1]))
-			threading.Thread(target = self.__handler, args = (socket, address)).start()
+			message = self.__handler(socket, address)
+			MessageHandler(self.__db_path, message, address[0]).start()
 
 	def __handler(self, socket, address):
 		message = b''
