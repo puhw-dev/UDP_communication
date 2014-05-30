@@ -3,6 +3,7 @@ import logging
 import json
 
 from dbman import DBManager
+from custom_exc import UnknownMessageType
 
 
 class MessageHandler(threading.Thread):
@@ -27,7 +28,10 @@ class MessageHandler(threading.Thread):
 		elif(self.__message_type == 'kill'):
 			self.__process_kill_message()
 		else:
-			pass #TODO raise custom exception UnknownMessage
+			try:
+				raise UnknownMessageType('Allowed message types are: register, measurement, kill')
+			except UnknownMessageType as e:
+				logging.exception('Message type {}'.format(self.__message_type))
 
 	def __process_register_message(self):
 		logging.debug('Processing register message')

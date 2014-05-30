@@ -9,7 +9,7 @@ import crypt
 import time
 
 from Crypto.Cipher import AES
-from auth_exc import AuthorizationException
+from custom_exc import AuthorizationException
 
 class Client:
 	def __init__(self, UDP_IP = '127.0.0.1', UDP_PORT = 50009):
@@ -58,16 +58,21 @@ if __name__ == '__main__':
 	client.send_data("""{
 	"message_type" : "register",
 	"username" : "user1",
-	"hostname" : "host1",
+	"hostname" : "host2",
 	"sensor_type" : "sys",
-	"sensor_name" : "sensor1",
+	"sensor_name" : "sensor2",
 	"rpm" : 10
 	}""")
 
 	client.send_data("""{
 	"message_type" : "measurement",
-	"sensor_name" : "sensor1",
+	"sensor_name" : "sensor2",
 	"metrics_name" : "cpu",
 	"data":
-		{ "val":"55%", "time":"10/10/2014 10:10:11" }
+		{ "val":"65%", "time":"1/10/2014 11:11:10" }
+	}""")
+
+	client.send_data("""{
+	"message_type" : "kil",
+	"kill" : "sensor1"
 	}""")

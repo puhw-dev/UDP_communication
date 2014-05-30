@@ -6,7 +6,7 @@ import logging
 import utilities
 import crypt
 
-from auth_exc import AuthorizationException
+from custom_exc import AuthorizationException
 from handler import MessageHandler
 
 
