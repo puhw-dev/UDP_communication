@@ -14,7 +14,7 @@ from custom_exc import AuthorizationException
 class Client:
 	def __init__(self, config_file):
 		config = json.load(open(config_file))
-		self.__UDP_PORT = config['port']
+		self.__UDP_PORT = config['server_port']
 		self.__UDP_IP = config['server_ip']
 		self.__secret = config['secret']
 		self.__socket = None

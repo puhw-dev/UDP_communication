@@ -5,7 +5,8 @@ import sys
 
 class DBManager:
 	def __init__(self, dbfile):
-		self.__conn = sqlite3.connect(dbfile)
+		if(len(dbfile)!=0):
+			self.__conn = sqlite3.connect(dbfile)
 
 	def insert_into_sensor(self, values):
 		cursor = self.__conn.cursor()
@@ -31,6 +32,4 @@ class DBManager:
 if __name__ == '__main__':
 	manager = DBManager('../monitor.db')	
 	sensor_val = ('a','b','c','sen3','e',2)
-	#manager.insert_into_sensor(sensor_val)
-	print(manager.get_sensor_id(('sen1',)))
-	#manager.insert_into_metric(metric_val)
+	manager.insert_into_sensor(sensor_val)

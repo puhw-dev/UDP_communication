@@ -18,6 +18,7 @@ class MessageHandler(threading.Thread):
 		self.__parse_message()
 
 	def __parse_message(self):
+		self.__is_message_empty()
 		self.__data = json.loads(self.__message)
 		self.__message_type = self.__data['message_type']
 
@@ -29,6 +30,8 @@ class MessageHandler(threading.Thread):
 			self.__process_measurement_message()
 		elif(self.__message_type == 'kill'):
 			self.__process_kill_message()
+		elif(self.__message_type == 'empty'):
+			logging.error('Message length is 0! Propably due to AuthorizationException or problem with connection.')
 		else:
 			try:
 				raise UnknownMessageType('Allowed message types are: register, measurement, kill')
@@ -51,5 +54,10 @@ class MessageHandler(threading.Thread):
 		sensor_name = self.__data['sensor_name']
 		pid = check_output(['pgrep', sensor_name]).decode().rstrip()
 		call(['kill', '-9', pid])
+
+	def __is_message_empty(self):
+		if(len(self.__message) == 0):
+			self.__message = '{"message_type" : "empty"}'
+			
 
 		

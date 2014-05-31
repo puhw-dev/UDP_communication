@@ -1,5 +1,5 @@
 {
-	"server_ip" : "127.0.0.1",
-	"port"      : 50009,
-	"secret"    : "passw0rd"
+	"server_ip"   : "127.0.0.1",
+	"server_port" : 50009,
+	"secret"      : "passwOrd"
 }

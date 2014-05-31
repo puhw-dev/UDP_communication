@@ -14,7 +14,7 @@ from handler import MessageHandler
 class Server:
 	def __init__(self, config_file):
 		config = json.load(open(config_file))
-		self.__UDP_PORT = config['port']
+		self.__UDP_PORT = config['listen_on_port']
 		self.__MAX_BUFF = config['buffer']
 		self.__secret   = config['secret']
 		self.__db_path  = config['db_path']
