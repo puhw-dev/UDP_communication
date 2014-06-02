@@ -5,7 +5,7 @@ import logging
 import json
 import logger
 import utilities
-import crypt
+#import crypt
 
 from custom_exc import AuthorizationException
 from handler import MessageHandler
@@ -53,7 +53,7 @@ class Server:
 		finally:
 			socket.close()
 			logging.debug('Connection with {}:{} closed'.format(address[0], address[1]))
-		message = crypt.decrypt(message, self.__secret)
+		#message = crypt.decrypt(message, self.__secret)
 		logging.debug('Message received from {}:{} : {}'.format(address[0], address[1], message))
 		return message
 
