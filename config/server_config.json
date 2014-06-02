@@ -1,6 +1,6 @@
 {
 	"listen_on_port" : 50009,
 	"db_path"        : "../monitor.db",
-	"secret"         : "passw0rd",
+	"secret"         : "password",
 	"buffer"         : 128
 }

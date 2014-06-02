@@ -37,19 +37,21 @@ class Server:
 			MessageHandler(self.__db_path, message, address[0]).start()
 
 	def __handler(self, socket, address):
-		message = b''
+		#message = b''
+		message = ''
 		try:
 			self.__authorize(socket)		
 			data_length = struct.unpack('L', socket.recv(8))[0]
 			while data_length > 0: 
 				chunk_size = min(data_length, self.__MAX_BUFF)
-				message += socket.recv(chunk_size)
+				message += socket.recv(chunk_size).decode('UTF-8')
 				data_length -= chunk_size
 		except AuthorizationException as e:
 			logging.exception(e)
 		except IOError as e:
 			logging.exception(e)
-			message = b''	
+			#message = b''	
+			message = ''
 		finally:
 			socket.close()
 			logging.debug('Connection with {}:{} closed'.format(address[0], address[1]))

@@ -38,6 +38,7 @@ class Client:
 		self.__socket.send(bytes(sr, 'UTF-8'))
 		
 	def send_data(self, data):
+		data = bytes(data, 'UTF-8')
 		self.__init_socket()
 		try:
 			logging.debug('Communication started')
