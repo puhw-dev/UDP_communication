@@ -6,7 +6,7 @@ import logging
 import json
 import logger
 import utilities
-import crypt
+#import crypt
 
 from Crypto.Cipher import AES
 from custom_exc import AuthorizationException
@@ -42,7 +42,7 @@ class Client:
 		try:
 			logging.debug('Communication started')
 			self.__is_authorized()
-			data = crypt.encrypt(data, self.__secret)
+			#data = crypt.encrypt(data, self.__secret)
 			self.__socket.send(struct.pack('L', len(data)))
 			self.__socket.send(data)
 			logging.debug('Message sent')
