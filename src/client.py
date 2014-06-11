@@ -44,11 +44,11 @@ class Client:
 			logging.debug('Communication started')
 			self.__is_authorized()
 			#data = crypt.encrypt(data, self.__secret)
-			self.__socket.send(struct.pack('L', len(data)))
+			self.__socket.send(struct.pack('I', len(data)))
 			self.__socket.send(data)
 			logging.debug('Message sent')
 		except AuthorizationException as e:
-			self.__socket.send(struct.pack('L', 0))
+			self.__socket.send(struct.pack('I', 0))
 			logging.exception(e)
 		except IOError as e:
 			logging.exception(e)
