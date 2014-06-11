@@ -41,7 +41,7 @@ class Server:
 		message = ''
 		try:
 			self.__authorize(socket)		
-			data_length = struct.unpack('L', socket.recv(8))[0]
+			data_length = struct.unpack('I', socket.recv(4))[0]
 			while data_length > 0: 
 				chunk_size = min(data_length, self.__MAX_BUFF)
 				message += socket.recv(chunk_size).decode('UTF-8')
